@@ -70,6 +70,7 @@
       },
       //登录
       login() {
+        this.$router.push('/home')
         this.getCaptcha();
       },
     },
