@@ -25,7 +25,7 @@
     components: {},
     data() {
       return {
-        path: "12312"
+        path: ""
       }
     },
     created() {
@@ -38,22 +38,21 @@
     computed: {},
     methods: {
       uploadFile(e) {
-        let that = this;
+        let that=this
         e.target.addEventListener("change", function () {
-          console.log(e.target.files[0])
-          let file = e.target.files[0];
-          this.path = that.getObjectURL(file)
-          console.log(this.path)
+          console.log(this.value)
+          let file = this.files[0];
+          that.path = that.getObjectURL(file)
         })
       },
       getObjectURL(file) {
         let url = null;
-        if (window.createObjectURL != undefined) { // basic
-          url = window.createObjectURL(file);
-        } else if (window.webkitURL != undefined) { // webkit or chrome
-          url = window.webkitURL.createObjectURL(file);
-        } else if (window.URL != undefined) { // mozilla(firefox)
+        if (window.createObjcectURL != undefined) {
+          url = window.createOjcectURL(file);
+        } else if (window.URL != undefined) {
           url = window.URL.createObjectURL(file);
+        } else if (window.webkitURL != undefined) {
+          url = window.webkitURL.createObjectURL(file);
         }
         return url;
       },
