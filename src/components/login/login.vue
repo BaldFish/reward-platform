@@ -15,7 +15,7 @@
               <input type="password" placeholder="请输入密码" v-model="password">
             </li>
             <li>
-              <input type="text" placeholder="请输入验证码" v-model="captchaCode">
+              <input type="text" placeholder="请输入验证码" v-model="captcha_code">
               <img @click="getCaptcha" :src="captcha_number" alt="验证码">
             </li>
           </ul>
@@ -37,7 +37,7 @@
       return {
         userName: "",
         password: "",
-        captchaCode: "",
+        captcha_code: "",
         captcha_number: "",
         errorTip: false,
         errorMessage: "",
@@ -46,11 +46,12 @@
     created() {
     },
     beforeMount() {
-      this.$nextTick(() => {
+      /*this.$nextTick(() => {
         this.getCaptcha()
-      });
+      });*/
     },
     mounted() {
+      this.getCaptcha()
     },
     watch: {},
     computed: {},
@@ -70,7 +71,43 @@
       },
       //登录
       login() {
-        this.getCaptcha();
+        if(!this.userName){
+          this.errorTip = true;
+          this.errorMessage = "用户名不能为空";
+          return false
+        }else if(!this.password){
+          this.errorTip = true;
+          this.errorMessage = "密码不能为空";
+          return false
+        }else if(!this.captcha_code){
+          this.errorTip = true;
+          this.errorMessage = "验证码不能为空";
+          return false
+        }
+        let data = {
+          username: this.userName,
+          password: this.password,
+          captcha_id: this.captcha_id,
+          captcha_code: this.captcha_code,
+        };
+        this.$axios({
+          method: 'post',
+          url: `${this.$baseURL}/v1/launchreward/sessions`,
+          data: this.$querystring.stringify(data)
+        }).then(res => {
+
+          console.log(res);
+
+          console.log(res)
+
+        }).catch(error => {
+
+          this.errorTip = true;
+
+          this.errorMessage = error.response;
+
+          console.log(error);
+        });
       },
     },
   }
@@ -79,7 +116,7 @@
 <style scoped lang="stylus">
   .login {
     min-width 1400px
-    
+
     .login_head_wrap {
       width 1400px
       height 80px
@@ -87,20 +124,20 @@
       font-size 0
       display: flex;
       align-items: center
-      
+
       img {
         align-items: center;
         margin-left 20px
       }
     }
-    
+
     .login_main_wrap {
       height 1000px
       background-image: url('./images/bg.png');
       background-position: top center;
       background-repeat: no-repeat;
       padding-top 235px
-      
+
       .login_main {
         width: 440px;
         height: 450px;
@@ -108,7 +145,7 @@
         background-color: #ffffff;
         box-shadow: -12px 16px 50px 18px rgba(105, 58, 219, 0.07);
         border-top: 5px solid #c42923
-        
+
         .content {
           .title {
             text-align center
@@ -116,13 +153,13 @@
             color: #333333;
             margin-top 50px
           }
-          
+
           ul {
             margin-top 58px
-            
+
             li {
               margin-bottom 24px
-              
+
               input {
                 background: none;
                 outline: none;
@@ -153,16 +190,16 @@
                 font-size: 16px;
               }
             }
-            
+
             li:last-child {
               font-size 0
-              
+
               input {
                 font-size: 16px;
                 width 166px
                 margin-right 7px
               }
-              
+
               img {
                 width 127px
                 height 40px
@@ -184,6 +221,11 @@
             font-size: 18px;
             color: #ffffff;
             cursor pointer
+          }
+          .errorTip_wrap{
+            text-align: center;
+            color: #c42923;
+            margin-top: 16px;
           }
         }
       }
