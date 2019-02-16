@@ -53,7 +53,7 @@
     .main {
       flex: 1;
       width 100%
-      min-width 1200px
+      min-width 1400px
       margin: 0 auto;
     }
   }

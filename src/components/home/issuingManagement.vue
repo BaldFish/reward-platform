@@ -1,12 +1,16 @@
 <template>
-  <div class="assetQuery">
-    assetQuery
+  <div class="issuingManagement">
+    <div></div>
+    <div>
+      <div></div>
+      <div></div>
+    </div>
   </div>
 </template>
 
 <script>
   export default {
-    name: "assetQuery",
+    name: "issuingManagement",
     components: {},
     data() {
       return {}
@@ -24,6 +28,8 @@
 </script>
 
 <style scoped lang="stylus">
-  .assetQuery {
+  .issuingManagement {
+    width 1400px
+    margin 0 auto
   }
 </style>
