@@ -71,6 +71,7 @@
       },
       //登录
       login() {
+
         if(!this.userName){
           this.errorTip = true;
           this.errorMessage = "用户名不能为空";
@@ -108,6 +109,10 @@
 
           console.log(error);
         });
+
+
+        this.getCaptcha();
+
       },
     },
   }

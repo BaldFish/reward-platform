@@ -28,7 +28,7 @@
       //监听路由变化执行方法
       $route(to, from) {
         if(!sessionStorage.myLogin){
-          this.$router.push("/login")
+          //this.$router.push("/login")
         }
       }
     },
