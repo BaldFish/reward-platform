@@ -45,11 +45,6 @@
     },
     created() {
     },
-    beforeMount() {
-      /*this.$nextTick(() => {
-        this.getCaptcha()
-      });*/
-    },
     mounted() {
       this.getCaptcha()
     },
@@ -71,7 +66,6 @@
       },
       //登录
       login() {
-
         if(!this.userName){
           this.errorTip = true;
           this.errorMessage = "用户名不能为空";
@@ -96,23 +90,12 @@
           url: `${this.$baseURL}/v1/launchreward/sessions`,
           data: this.$querystring.stringify(data)
         }).then(res => {
-
-          console.log(res);
-
-          console.log(res)
-
+          window.sessionStorage.setItem("userInfo", JSON.stringify(res.data.data));
+          this.$router.push("/home/issuingManagement")
         }).catch(error => {
-
           this.errorTip = true;
-
-          this.errorMessage = error.response;
-
-          console.log(error);
+          this.errorMessage = error.response.data.message;
         });
-
-
-        this.getCaptcha();
-
       },
     },
   }
