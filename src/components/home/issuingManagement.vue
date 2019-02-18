@@ -46,18 +46,29 @@
           </thead>
           <tbody>
           <tr v-for="(item,index) of recordsList" :key="item.id" :class="index%2?'':'even'">
-            <td width="220">{{item.address}}</td>
-            <td width="100">{{item.name}}</td>
-            <td width="144">{{item.phone}}</td>
-            <td width="200">{{item.email}}</td>
-            <td width="100">{{item.rule}}</td>
-            <td width="150">{{item.created_at}}</td>
-            <td width="100">{{item.value}}</td>
-            <td width="200">{{item.from}}</td>
-            <td width="150">{{item.remark}}</td>
+            <td><div style="width: 220px">{{item.address}}</div></td>
+            <td><div style="width: 100px">{{item.name}}</div></td>
+            <td><div style="width: 144px">{{item.phone}}</div></td>
+            <td><div style="width: 200px">{{item.email}}</div></td>
+            <td><div style="width: 100px">{{item.rule}}</div></td>
+            <td><div style="width: 150px">{{item.created_at}}</div></td>
+            <td><div style="width: 100px">{{item.value}}</div></td>
+            <td><div style="width: 200px">{{item.from}}</div></td>
+            <td><div style="width: 150px">{{item.remark}}</div></td>
           </tr>
           </tbody>
         </table>
+        <div class="paging" style="text-align:center">
+          <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page.sync="currentPage"
+            :page-size=limit
+            :page-sizes="[5, 10, 20, 30]"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total=totalUser>
+          </el-pagination>
+        </div>
       </div>
     </div>
   </div>
@@ -214,8 +225,9 @@
     
     .content_wrap {
       margin-top 20px
+      margin-bottom 20px
       width 1400px
-      height 860px
+      //height 860px
       border: 2px solid #ffe9e8;
       
       .search {
@@ -273,20 +285,26 @@
               line-height 40px
               font-size 14px
               color: #333333;
-              td:first-child{
+              td:first-child div{
                 padding-left 25px
               }
               td{
-                padding-right 10px
-                overflow: hidden;
-                white-space: nowrap;
-                text-overflow: ellipsis;
+                div{
+                  padding-right 10px
+                  overflow: hidden;
+                  white-space: nowrap;
+                  text-overflow: ellipsis;
+                }
               }
             }
             .even{
               background-color #ffffff
             }
           }
+        }
+        .paging{
+          height 100px
+          padding-top 30px
         }
       }
     }
