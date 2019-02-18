@@ -46,12 +46,11 @@
     created() {
     },
     beforeMount() {
-      /*this.$nextTick(() => {
+      this.$nextTick(() => {
         this.getCaptcha()
-      });*/
+      });
     },
     mounted() {
-      this.getCaptcha()
     },
     watch: {},
     computed: {},
@@ -71,7 +70,6 @@
       },
       //登录
       login() {
-
         if(!this.userName){
           this.errorTip = true;
           this.errorMessage = "用户名不能为空";
@@ -96,23 +94,14 @@
           url: `${this.$baseURL}/v1/launchreward/sessions`,
           data: this.$querystring.stringify(data)
         }).then(res => {
-
           console.log(res);
-
           console.log(res)
-
         }).catch(error => {
-
           this.errorTip = true;
-
           this.errorMessage = error.response;
-
           console.log(error);
         });
-
-
         this.getCaptcha();
-
       },
     },
   }
@@ -212,6 +201,7 @@
                 border-radius: 15px;
                 vertical-align top
                 font-size: 16px;
+                cursor pointer
               }
             }
           }
