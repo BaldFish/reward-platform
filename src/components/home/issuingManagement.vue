@@ -6,7 +6,7 @@
         <span class="text">路径：</span>
         <input class="import_path" type="text" readonly="readonly" v-model="path">
         <label>
-          <input class="import_file" type="file" @click="uploadFile($event)">
+          <input class="import_file" type="file" @change="uploadFile($event)" ref="a">
           <span class="import_btn">导入</span>
         </label>
         <span class="send">发送</span>
@@ -46,15 +46,33 @@
           </thead>
           <tbody>
           <tr v-for="(item,index) of recordsList" :key="item.id" :class="index%2?'':'even'">
-            <td><div style="width: 220px">{{item.address}}</div></td>
-            <td><div style="width: 100px">{{item.name}}</div></td>
-            <td><div style="width: 144px">{{item.phone}}</div></td>
-            <td><div style="width: 200px">{{item.email}}</div></td>
-            <td><div style="width: 100px">{{item.rule}}</div></td>
-            <td><div style="width: 150px">{{item.created_at}}</div></td>
-            <td><div style="width: 100px">{{item.value}}</div></td>
-            <td><div style="width: 200px">{{item.from}}</div></td>
-            <td><div style="width: 150px">{{item.remark}}</div></td>
+            <td>
+              <div style="width: 220px">{{item.address}}</div>
+            </td>
+            <td>
+              <div style="width: 100px">{{item.name}}</div>
+            </td>
+            <td>
+              <div style="width: 144px">{{item.phone}}</div>
+            </td>
+            <td>
+              <div style="width: 200px">{{item.email}}</div>
+            </td>
+            <td>
+              <div style="width: 100px">{{item.rule}}</div>
+            </td>
+            <td>
+              <div style="width: 150px">{{item.created_at}}</div>
+            </td>
+            <td>
+              <div style="width: 100px">{{item.value}}</div>
+            </td>
+            <td>
+              <div style="width: 200px">{{item.from}}</div>
+            </td>
+            <td>
+              <div style="width: 150px">{{item.remark}}</div>
+            </td>
           </tr>
           </tbody>
         </table>
@@ -80,15 +98,15 @@
     components: {},
     data() {
       return {
-        token:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NjYwMDkwNTAsInVzZXJfaWQiOiI1YzY2ODcxZGMzZGIzYjM3ZjQ3ZmFkNGIiLCJkZXZpY2VfaWQiOiJsYXVuY2gtcmV3YXJkIn0.T_BE32VXQnAM1AExq0Y-kgMUPecRTlHErRAtDLflIvQ",
+        token: "",
         path: "",
         walletAddress: "",
         phone: "",
         email: "",
-        time:["",""],
-        recordsList:[],
-        page:1,
-        limit:10,
+        time: ["", ""],
+        recordsList: [],
+        page: 1,
+        limit: 10,
         currentPage: 1,
         total: 10,
         search: false,//是否搜索标识
@@ -103,8 +121,8 @@
     },
     watch: {
       time: function () {
-        if(this.time===null){
-          this.time=["",""]
+        if (this.time === null) {
+          this.time = ["", ""]
         }
       }
     },
@@ -112,12 +130,11 @@
     methods: {
       //上传文件
       uploadFile(e) {
-        let that = this;
-        e.target.addEventListener("change", function () {
-          let file = this.files[0];
-          that.path = that.getObjectURL(file)
-        })
-      },
+        let files = e.target.files[0];
+        this.path=e.target.value;
+        //this.path = this.getObjectURL(files);
+      }
+      ,
       getObjectURL(file) {
         let url = null;
         if (window.createObjcectURL != undefined) {
@@ -127,30 +144,33 @@
         } else if (window.webkitURL != undefined) {
           url = window.webkitURL.createObjectURL(file);
         }
-        return url;
-      },
+        return url
+      }
+      ,
       //获取奖励发放流水列表
-      getRecordsList(){
+      getRecordsList() {
+        this.token = JSON.parse(window.sessionStorage.getItem('myLogin')).token;
         this.$axios({
-          method:'GET',
-          url:`${this.$baseURL}/v1/launchreward/token/ydd/records?address=${this.walletAddress}&phone=${this.phone}&email=${this.email}&since=${new
+          method: 'GET',
+          url: `${this.$baseURL}/v1/launchreward/token/ydd/records?address=${this.walletAddress}&phone=${this.phone}&email=${this.email}&since=${new
           Date(this.time[0]).toUTCString() === "Invalid Date" ? "" : new Date(this.time[0]).toUTCString()}&to=${new Date(this.time[1]).toUTCString() === "Invalid Date" ? "" : new Date(this.time[1]).toUTCString()}&page=${this.page}&limit=${this.limit}`,
           headers: {
-            'X-Access-Token':this.token,
+            'X-Access-Token': this.token,
           }
-        }).then(res=>{
-          this.total=res.data.data.total_count;
+        }).then(res => {
+          this.total = res.data.data.total_count;
           let that = this;
           res.data.data.records.forEach(function (item) {
             if (item.created_at) {
               item.created_at = that.$utils.formatDate(new Date(item.created_at), "yyyy-MM-dd hh:mm:ss");
             }
           });
-          this.recordsList=res.data.data.records;
-        }).catch(error=>{
+          this.recordsList = res.data.data.records;
+        }).catch(error => {
           console.log(error)
         })
-      },
+      }
+      ,
       //点击搜索按钮获取奖励发放流水列表
       /*btnSearchRecordsList() {
       },*/
@@ -181,13 +201,15 @@
         this.limit = val;
         this.getRecordsList();
         //this.search ? this.pageSearchRecordsList() : this.getRecordsList();
-      },
+      }
+      ,
       //切换分页
       handleCurrentChange(val) {
         this.page = val;
         this.getRecordsList();
         //this.search ? this.pageSearchRecordsList() : this.getRecordsList();
-      },
+      }
+      ,
     },
   }
 </script>
@@ -306,38 +328,45 @@
           cursor pointer
         }
       }
-      .content{
+      
+      .content {
         width 1364px
         margin 0 auto
         margin-top 30px
-        overflow:auto;
+        overflow: auto;
         display: block;
-        table{
+        
+        table {
           background-color #f8f8f8
           width 1364px
           table-layout automatic
-          thead{
-            tr{
+          
+          thead {
+            tr {
               height 90px
               line-height 90px
               font-size: 18px;
               color: #222222;
-              td:first-child{
+              
+              td:first-child {
                 padding-left 25px
               }
             }
           }
-          tbody{
-            tr{
+          
+          tbody {
+            tr {
               height 40px
               line-height 40px
               font-size 14px
               color: #333333;
-              td:first-child div{
+              
+              td:first-child div {
                 padding-left 25px
               }
-              td{
-                div{
+              
+              td {
+                div {
                   padding-right 10px
                   overflow: hidden;
                   white-space: nowrap;
@@ -345,12 +374,14 @@
                 }
               }
             }
-            .even{
+            
+            .even {
               background-color #ffffff
             }
           }
         }
-        .paging{
+        
+        .paging {
           height 100px
           padding-top 30px
         }

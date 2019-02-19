@@ -94,12 +94,11 @@
           url: `${this.$baseURL}/v1/launchreward/sessions`,
           data: this.$querystring.stringify(data)
         }).then(res => {
-          console.log(res);
-          console.log(res)
+          sessionStorage.setItem("myLogin", JSON.stringify(res.data.data));
+          this.$router.push("/home")
         }).catch(error => {
-          this.errorTip = true;
-          this.errorMessage = error.response;
-          console.log(error);
+          //this.errorTip = true;
+          this.errorMessage = error.response.data.message;
         });
         this.getCaptcha();
       },
@@ -222,6 +221,26 @@
             color: #c42923;
             margin-top: 16px;
           }
+          /*.errorTip_wrap {
+              width 100%
+              text-align center
+              font-size 0
+              position fixed
+              top 50%
+  
+              .errorTip {
+                display inline-block
+                box-sizing border-box
+                line-height 1.6
+                max-width 520px;
+                padding 20px 30px
+                background-color #000000
+                opacity 0.7
+                font-size 26px; !*px*!
+                color #ffffff
+                border-radius 30px
+              }
+            }*/
         }
       }
     }

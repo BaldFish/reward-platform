@@ -22,7 +22,7 @@
     },
     beforeMount() {
       if(!sessionStorage.myLogin){
-        //this.$router.push("/login")
+        this.$router.push("/login")
       }
     },
     mounted() {
