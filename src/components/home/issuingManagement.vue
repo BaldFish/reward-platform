@@ -27,7 +27,7 @@
                         end-placeholder="结束日期"
                         :default-time="['00:00:00', '23:59:59']" size="small">
         </el-date-picker>
-        <span @click="btnSearch" class="btn_search">搜索</span>
+        <span @click="getRecordsList" class="btn_search">搜索</span>
       </div>
       <div class="content">
         <table>
@@ -65,8 +65,8 @@
             :current-page.sync="currentPage"
             :page-size=limit
             :page-sizes="[5, 10, 20, 30]"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total=totalUser>
+            layout="total, sizes, prev, pager, next,jumper"
+            :total=total>
           </el-pagination>
         </div>
       </div>
@@ -86,15 +86,18 @@
         phone: "",
         email: "",
         time:["",""],
-        page:"0",
-        limit:"10",
         recordsList:[],
+        page:1,
+        limit:10,
+        currentPage: 1,
+        total: 10,
+        search: false,//是否搜索标识
       }
     },
     created() {
     },
     beforeMount() {
-      this.getList()
+      this.getRecordsList()
     },
     mounted() {
     },
@@ -107,6 +110,7 @@
     },
     computed: {},
     methods: {
+      //上传文件
       uploadFile(e) {
         let that = this;
         e.target.addEventListener("change", function () {
@@ -125,21 +129,64 @@
         }
         return url;
       },
-      getList(){
+      //获取奖励发放流水列表
+      getRecordsList(){
         this.$axios({
           method:'GET',
-          url:`${this.$baseURL}/v1/launchreward/token/ydd/records?address=${this.walletAddress}&phone=${this.phone}&email=${this.email}&since=${this.time[0]}&to=${this.time[1]}&page=${this.page}&limit=${this.limit}`,
+          url:`${this.$baseURL}/v1/launchreward/token/ydd/records?address=${this.walletAddress}&phone=${this.phone}&email=${this.email}&since=${new
+          Date(this.time[0]).toUTCString() === "Invalid Date" ? "" : new Date(this.time[0]).toUTCString()}&to=${new Date(this.time[1]).toUTCString() === "Invalid Date" ? "" : new Date(this.time[1]).toUTCString()}&page=${this.page}&limit=${this.limit}`,
           headers: {
             'X-Access-Token':this.token,
           }
         }).then(res=>{
+          this.total=res.data.data.total_count;
+          let that = this;
+          res.data.data.records.forEach(function (item) {
+            if (item.created_at) {
+              item.created_at = that.$utils.formatDate(new Date(item.created_at), "yyyy-MM-dd hh:mm:ss");
+            }
+          });
           this.recordsList=res.data.data.records;
-          console.log(this.recordsList)
         }).catch(error=>{
           console.log(error)
         })
       },
-      btnSearch() {
+      //点击搜索按钮获取奖励发放流水列表
+      /*btnSearchRecordsList() {
+      },*/
+      //分页切换搜索用户列表
+      /*pageSearchRecordsList() {
+        this.search = true;
+        this.$axios({
+          method: "POST",
+          url: `${this.$baseURL}/v1/backstage/users/find`,
+          data: this.$querystring.stringify(data),
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          }
+        }).then(res => {
+          let that = this;
+          res.data.users.forEach(function (item) {
+            if (item.created_at) {
+              item.created_at = that.$utils.formatDate(new Date(item.created_at), "yyyy-MM-dd hh:mm:ss");
+            }
+          });
+          this.userList = res.data.users;
+        }).catch(error => {
+          console.log(error)
+        })
+      },*/
+      //更改每页显示条数
+      handleSizeChange(val) {
+        this.limit = val;
+        this.getRecordsList();
+        //this.search ? this.pageSearchRecordsList() : this.getRecordsList();
+      },
+      //切换分页
+      handleCurrentChange(val) {
+        this.page = val;
+        this.getRecordsList();
+        //this.search ? this.pageSearchRecordsList() : this.getRecordsList();
       },
     },
   }
@@ -256,6 +303,7 @@
           text-align center
           font-size: 18px;
           color: #fefefe;
+          cursor pointer
         }
       }
       .content{
