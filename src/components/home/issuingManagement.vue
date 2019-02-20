@@ -134,7 +134,8 @@
         let that = this;
         e.target.addEventListener("change", function () {
           let file = this.files[0];
-          that.path = that.getObjectURL(file);
+          //that.path = that.getObjectURL(file);
+          that.path=e.target.value;
           that.file = e.target.files[0];
         })
       },
