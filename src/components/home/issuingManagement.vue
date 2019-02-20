@@ -245,7 +245,7 @@
             }).then(res => {
               //关闭loading
               loading.close();
-              //结束提示
+              //正确提示
               this.$alert('发送成功！', {
                 confirmButtonText: '确定',
                 center: true,
@@ -254,7 +254,19 @@
                 }
               });
             }).catch(error => {
-              console.log(error);
+              //关闭loading
+              loading.close();
+              //错误提示
+              let that = this;
+              setTimeout(function () {
+                that.$alert(error.response.data.message, {
+                  confirmButtonText: '确定',
+                  center: true,
+                  callback: () => {
+                    console.log("关闭modal")
+                  }
+                })
+              },500);
             });
           }).catch(() => {
             console.log("已取消")
