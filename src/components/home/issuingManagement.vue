@@ -6,10 +6,10 @@
         <span class="text">路径：</span>
         <input class="import_path" type="text" readonly="readonly" v-model="path">
         <label>
-          <input class="import_file" type="file" accept=".xlsx" @change="uploadFile($event)">
+          <input class="import_file" type="file" @click="uploadFile($event)" accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
           <span class="import_btn">导入</span>
         </label>
-        <span class="send">发送</span>
+        <span class="send" @click="openModal">发送</span>
       </div>
     </div>
     <div class="content_wrap">
@@ -109,6 +109,7 @@
         limit: 10,
         currentPage: 1,
         total: 10,
+        file:"",
         //search: false,//是否搜索标识
       }
     },
@@ -130,9 +131,12 @@
     methods: {
       //上传文件
       uploadFile(e) {
-        this.path = e.target.value;
-        let files = e.target.files[0];
-        //this.path = this.getObjectURL(files);
+        let that = this;
+        e.target.addEventListener("change", function () {
+          let file = this.files[0];
+          that.path = that.getObjectURL(file);
+          that.file = e.target.files[0];
+        })
       },
       getObjectURL(file) {
         let url = null;
@@ -209,6 +213,53 @@
         //this.search ? this.pageSearchRecordsList() : this.getRecordsList();
       }
       ,
+      openModal() {
+        //有无excel判断
+        if (this.path){
+          this.$confirm('确定发送元豆豆到账户？',  {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            center: true
+          }).then(() => {
+            //加载loading
+            const loading = this.$loading({
+              lock: true,
+              text: '加载中...',
+              spinner: 'el-icon-loading',
+              background: 'rgba(0, 0, 0, 0.7)'
+            });
+            //上传
+            let param = new FormData(); //创建form对象
+            param.append('file',this.file);//通过append向form对象添加数据
+            this.$axios({
+              method: 'post',
+              url: `${this.$baseURL}/v1/launchreward/token/ydd/upload`,
+              processData: false,
+              data: param,
+              headers: {
+                'Content-Type': 'multipart/form-data',
+                'X-Access-Token':this.token,
+                'token':this.token,
+              }
+            }).then(res => {
+              //关闭loading
+              loading.close();
+              //结束提示
+              this.$alert('发送成功！', {
+                confirmButtonText: '确定',
+                center: true,
+                callback: () => {
+                  console.log("关闭modal")
+                }
+              });
+            }).catch(error => {
+              console.log(error);
+            });
+          }).catch(() => {
+            console.log("已取消")
+          });
+        }
+      }
     },
   }
 </script>
@@ -217,27 +268,27 @@
   .issuingManagement {
     width 1400px
     margin 0 auto
-    
+
     .import_wrap {
       margin-top 10px
       width 1400px
       height: 110px;
       border: 2px solid #ffe9e8;
       padding-left 50px
-      
+
       .tip {
         margin 20px 0 10px
         font-size: 18px;
         color: #000000;
       }
-      
+
       .import {
         font-size 0
-        
+
         .text {
           font-size 16px
         }
-        
+
         .import_path {
           background: none;
           outline: none;
@@ -251,16 +302,16 @@
           padding-left 20px
           margin-left 40px
           margin-right 80px
-          
+
         }
-        
+
         label {
           margin-right 20px
-          
+
           .import_file {
             display none
           }
-          
+
           .import_btn {
             display inline-block
             width: 106px;
@@ -275,7 +326,7 @@
             cursor pointer
           }
         }
-        
+
         .send {
           display inline-block
           text-align center
@@ -290,30 +341,30 @@
         }
       }
     }
-    
+
     .content_wrap {
       margin-top 20px
       margin-bottom 20px
       width 1400px
       //height 860px
       border: 2px solid #ffe9e8;
-      
+
       .search {
         font-size 0
         padding-left 50px
-        
+
         p {
           margin-top 20px
           margin-bottom 15px
           font-size: 18px;
           color: #000000;
         }
-        
+
         span {
           font-size 16px
           color: #333333;
         }
-        
+
         .btn_search {
           display inline-block
           width: 106px;
@@ -327,43 +378,43 @@
           cursor pointer
         }
       }
-      
+
       .content {
         width 1364px
         margin 0 auto
         margin-top 30px
         overflow: auto;
         display: block;
-        
+
         table {
           background-color #f8f8f8
           width 1364px
           table-layout automatic
-          
+
           thead {
             tr {
               height 90px
               line-height 90px
               font-size: 18px;
               color: #222222;
-              
+
               td:first-child {
                 padding-left 25px
               }
             }
           }
-          
+
           tbody {
             tr {
               height 40px
               line-height 40px
               font-size 14px
               color: #333333;
-              
+
               td:first-child div {
                 padding-left 25px
               }
-              
+
               td {
                 div {
                   padding-right 10px
@@ -373,13 +424,13 @@
                 }
               }
             }
-            
+
             .even {
               background-color #ffffff
             }
           }
         }
-        
+
         .paging {
           height 100px
           padding-top 30px
@@ -397,28 +448,61 @@
         color #333333
       }
     }
-    
+
     .phone_input {
       margin-left 15px
     }
-    
+
     .phone_input, .email_input {
       margin-right 21px
     }
-    
+
     .date_input {
       margin-top 20px
       margin-right 30px
       background-color #f8f8f8
       border: 1px solid #ffe9e8;
-      
+
       input {
         background-color #f8f8f8
       }
     }
-    
+
     .el-range-editor.is-active, .el-range-editor.is-active:hover {
       border-color: #ffe9e8;
+    }
+  }
+
+  .el-message-box{
+    width: 350px;
+    height: 200px;
+    border-radius: 10px;
+    p{
+      font-size: 20px;
+      color: #333333;
+      margin-bottom: 35px;
+    }
+    .el-message-box__btns{
+      .el-button{
+        width: 106px;
+        height: 40px;
+        border-radius: 10px;
+        border: solid 1px #c42923;
+        font-size: 18px;
+        color: #c42923;
+        background-color #c42923
+      }
+      .el-button:nth-child(1){
+        background-color #ffffff
+      }
+      .el-button:nth-child(2){
+        color #ffffff
+        margin-left 40px
+      }
+      .el-button--primary{
+        color #ffffff
+        background-color #c42923 !important
+      }
     }
   }
 </style>
