@@ -6,7 +6,7 @@
         <span class="text">路径：</span>
         <input class="import_path" type="text" readonly="readonly" v-model="path">
         <label>
-          <input class="import_file" type="file" @change="uploadFile($event)" ref="a">
+          <input class="import_file" type="file" accept=".xlsx" @change="uploadFile($event)">
           <span class="import_btn">导入</span>
         </label>
         <span class="send">发送</span>
@@ -109,7 +109,7 @@
         limit: 10,
         currentPage: 1,
         total: 10,
-        search: false,//是否搜索标识
+        //search: false,//是否搜索标识
       }
     },
     created() {
@@ -130,18 +130,17 @@
     methods: {
       //上传文件
       uploadFile(e) {
+        this.path = e.target.value;
         let files = e.target.files[0];
-        this.path=e.target.value;
         //this.path = this.getObjectURL(files);
-      }
-      ,
+      },
       getObjectURL(file) {
         let url = null;
-        if (window.createObjcectURL != undefined) {
+        if (window.createObjcectURL != undefined) {//ie
           url = window.createOjcectURL(file);
-        } else if (window.URL != undefined) {
+        } else if (window.URL != undefined) {//火狐
           url = window.URL.createObjectURL(file);
-        } else if (window.webkitURL != undefined) {
+        } else if (window.webkitURL != undefined) {//谷歌
           url = window.webkitURL.createObjectURL(file);
         }
         return url

@@ -44,6 +44,8 @@ import '../static/UE/ueditor.parse.min.js'
 
 import '@/common/stylus/index.styl';
 
+import 'babel-polyfill'
+
 Vue.config.productionTip = false;
 /* eslint-disable no-new */
 const store = new Vuex.Store({
