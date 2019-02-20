@@ -97,7 +97,7 @@
           sessionStorage.setItem("myLogin", JSON.stringify(res.data.data));
           this.$router.push("/home")
         }).catch(error => {
-          //this.errorTip = true;
+          this.errorTip = true;
           this.errorMessage = error.response.data.message;
         });
         this.getCaptcha();
