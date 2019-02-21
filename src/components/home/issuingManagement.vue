@@ -6,7 +6,8 @@
         <span class="text">路径：</span>
         <input class="import_path" type="text" readonly="readonly" v-model="path">
         <label>
-          <input class="import_file" type="file" @click="uploadFile($event)" accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+          <input class="import_file" type="file" @click="uploadFile($event)"
+                 accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
           <span class="import_btn">导入</span>
         </label>
         <span class="send" @click="openModal">发送</span>
@@ -27,66 +28,84 @@
                         end-placeholder="结束日期"
                         :default-time="['00:00:00', '23:59:59']" size="small">
         </el-date-picker>
-        <span @click="getRecordsList" class="btn_search">搜索</span>
+        <span @click="btnSearchRecordsList" class="btn_search">搜索</span>
       </div>
       <div class="content">
         <table>
           <thead>
           <tr>
-            <td>钱包地址</td>
-            <td>姓名</td>
-            <td>手机号</td>
-            <td>邮箱</td>
-            <td>奖励类型</td>
-            <td>创建时间</td>
-            <td>金额</td>
-            <td>发放账号</td>
-            <td>备注</td>
+            <td>
+              <div style="min-width:220px">钱包地址</div>
+            </td>
+            <td>
+              <div style="min-width:100px">姓名</div>
+            </td>
+            <td>
+              <div style="min-width:144px">手机号</div>
+            </td>
+            <td>
+              <div style="min-width:150px">邮箱</div>
+            </td>
+            <td>
+              <div style="min-width:200px">奖励类型</div>
+            </td>
+            <td>
+              <div style="min-width:150px">创建时间</div>
+            </td>
+            <td>
+              <div style="min-width:100px">金额</div>
+            </td>
+            <td>
+              <div style="min-width:150px">发放账号</div>
+            </td>
+            <td>
+              <div style="min-width:150px">备注</div>
+            </td>
           </tr>
           </thead>
           <tbody>
           <tr v-for="(item,index) of recordsList" :key="item.id" :class="index%2?'':'even'">
             <td>
-              <div style="width: 220px">{{item.address}}</div>
+              <div style="min-width: 220px">{{item.address}}</div>
             </td>
             <td>
-              <div style="width: 100px">{{item.name}}</div>
+              <div style="min-width: 100px">{{item.name}}</div>
             </td>
             <td>
-              <div style="width: 144px">{{item.phone}}</div>
+              <div style="min-width: 144px">{{item.phone}}</div>
             </td>
             <td>
-              <div style="width: 200px">{{item.email}}</div>
+              <div style="min-width: 150px">{{item.email}}</div>
             </td>
             <td>
-              <div style="width: 100px">{{item.rule}}</div>
+              <div style="min-width: 200px">{{item.rule}}</div>
             </td>
             <td>
-              <div style="width: 150px">{{item.created_at}}</div>
+              <div style="min-width: 150px">{{item.created_at}}</div>
             </td>
             <td>
-              <div style="width: 100px">{{item.value}}</div>
+              <div style="min-width: 100px">{{item.value}}</div>
             </td>
             <td>
-              <div style="width: 200px">{{item.from}}</div>
+              <div style="min-width: 150px">{{item.from}}</div>
             </td>
             <td>
-              <div style="width: 150px">{{item.remark}}</div>
+              <div style="min-width: 150px">{{item.remark}}</div>
             </td>
           </tr>
           </tbody>
         </table>
-        <div class="paging" style="text-align:center">
-          <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page.sync="currentPage"
-            :page-size=limit
-            :page-sizes="[5, 10, 20, 30]"
-            layout="total, sizes, prev, pager, next,jumper"
-            :total=total>
-          </el-pagination>
-        </div>
+      </div>
+      <div class="paging" style="text-align:center">
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page.sync="page"
+          :page-size=limit
+          :page-sizes="[5, 10, 20, 30]"
+          layout="total, sizes, prev, pager, next,jumper"
+          :total=total>
+        </el-pagination>
       </div>
     </div>
   </div>
@@ -107,9 +126,8 @@
         recordsList: [],
         page: 1,
         limit: 10,
-        currentPage: 1,
         total: 10,
-        file:"",
+        file: "",
         //search: false,//是否搜索标识
       }
     },
@@ -135,7 +153,7 @@
         e.target.addEventListener("change", function () {
           let file = this.files[0];
           //that.path = that.getObjectURL(file);
-          that.path=e.target.value;
+          that.path = e.target.value;
           that.file = e.target.files[0];
         })
       },
@@ -149,8 +167,7 @@
           url = window.webkitURL.createObjectURL(file);
         }
         return url
-      }
-      ,
+      },
       //获取奖励发放流水列表
       getRecordsList() {
         this.token = JSON.parse(window.sessionStorage.getItem('myLogin')).token;
@@ -173,51 +190,27 @@
         }).catch(error => {
           console.log(error)
         })
-      }
-      ,
+      },
       //点击搜索按钮获取奖励发放流水列表
-      /*btnSearchRecordsList() {
-      },*/
-      //分页切换搜索用户列表
-      /*pageSearchRecordsList() {
-        this.search = true;
-        this.$axios({
-          method: "POST",
-          url: `${this.$baseURL}/v1/backstage/users/find`,
-          data: this.$querystring.stringify(data),
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          }
-        }).then(res => {
-          let that = this;
-          res.data.users.forEach(function (item) {
-            if (item.created_at) {
-              item.created_at = that.$utils.formatDate(new Date(item.created_at), "yyyy-MM-dd hh:mm:ss");
-            }
-          });
-          this.userList = res.data.users;
-        }).catch(error => {
-          console.log(error)
-        })
-      },*/
+      btnSearchRecordsList() {
+        this.page = 1;
+        this.getRecordsList();
+      },
       //更改每页显示条数
       handleSizeChange(val) {
+        this.page = 1;
         this.limit = val;
         this.getRecordsList();
-        //this.search ? this.pageSearchRecordsList() : this.getRecordsList();
-      }
-      ,
+      },
       //切换分页
       handleCurrentChange(val) {
         this.page = val;
         this.getRecordsList();
-        //this.search ? this.pageSearchRecordsList() : this.getRecordsList();
-      }
-      ,
+      },
       openModal() {
         //有无excel判断
-        if (this.path){
-          this.$confirm('确定发送元豆豆到账户？',  {
+        if (this.path) {
+          this.$confirm('确定发送元豆豆到账户？', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             center: true
@@ -231,7 +224,7 @@
             });
             //上传
             let param = new FormData(); //创建form对象
-            param.append('file',this.file);//通过append向form对象添加数据
+            param.append('file', this.file);//通过append向form对象添加数据
             this.$axios({
               method: 'post',
               url: `${this.$baseURL}/v1/launchreward/token/ydd/upload`,
@@ -239,8 +232,8 @@
               data: param,
               headers: {
                 'Content-Type': 'multipart/form-data',
-                'X-Access-Token':this.token,
-                'token':this.token,
+                'X-Access-Token': this.token,
+                'token': this.token,
               }
             }).then(res => {
               //关闭loading
@@ -269,27 +262,27 @@
   .issuingManagement {
     width 1400px
     margin 0 auto
-
+    
     .import_wrap {
       margin-top 10px
       width 1400px
       height: 110px;
       border: 2px solid #ffe9e8;
       padding-left 50px
-
+      
       .tip {
         margin 20px 0 10px
         font-size: 18px;
         color: #000000;
       }
-
+      
       .import {
         font-size 0
-
+        
         .text {
           font-size 16px
         }
-
+        
         .import_path {
           background: none;
           outline: none;
@@ -303,16 +296,16 @@
           padding-left 20px
           margin-left 40px
           margin-right 80px
-
+          
         }
-
+        
         label {
           margin-right 20px
-
+          
           .import_file {
             display none
           }
-
+          
           .import_btn {
             display inline-block
             width: 106px;
@@ -327,7 +320,7 @@
             cursor pointer
           }
         }
-
+        
         .send {
           display inline-block
           text-align center
@@ -342,30 +335,30 @@
         }
       }
     }
-
+    
     .content_wrap {
       margin-top 20px
       margin-bottom 20px
       width 1400px
       //height 860px
       border: 2px solid #ffe9e8;
-
+      
       .search {
         font-size 0
         padding-left 50px
-
+        
         p {
           margin-top 20px
           margin-bottom 15px
           font-size: 18px;
           color: #000000;
         }
-
+        
         span {
           font-size 16px
           color: #333333;
         }
-
+        
         .btn_search {
           display inline-block
           width: 106px;
@@ -379,43 +372,43 @@
           cursor pointer
         }
       }
-
+      
       .content {
         width 1364px
         margin 0 auto
         margin-top 30px
         overflow: auto;
         display: block;
-
+        
         table {
           background-color #f8f8f8
           width 1364px
           table-layout automatic
-
+          
           thead {
             tr {
               height 90px
               line-height 90px
               font-size: 18px;
               color: #222222;
-
+              
               td:first-child {
                 padding-left 25px
               }
             }
           }
-
+          
           tbody {
             tr {
               height 40px
               line-height 40px
               font-size 14px
               color: #333333;
-
+              
               td:first-child div {
                 padding-left 25px
               }
-
+              
               td {
                 div {
                   padding-right 10px
@@ -425,17 +418,17 @@
                 }
               }
             }
-
+            
             .even {
               background-color #ffffff
             }
           }
         }
-
-        .paging {
-          height 100px
-          padding-top 30px
-        }
+      }
+      
+      .paging {
+        height 100px
+        padding-top 30px
       }
     }
   }
@@ -449,42 +442,44 @@
         color #333333
       }
     }
-
+    
     .phone_input {
       margin-left 15px
     }
-
+    
     .phone_input, .email_input {
       margin-right 21px
     }
-
+    
     .date_input {
       margin-top 20px
       margin-right 30px
       background-color #f8f8f8
       border: 1px solid #ffe9e8;
-
+      
       input {
         background-color #f8f8f8
       }
     }
-
+    
     .el-range-editor.is-active, .el-range-editor.is-active:hover {
       border-color: #ffe9e8;
     }
   }
-
-  .el-message-box{
+  
+  .el-message-box {
     width: 350px;
     height: 200px;
     border-radius: 10px;
-    p{
+    
+    p {
       font-size: 20px;
       color: #333333;
       margin-bottom: 35px;
     }
-    .el-message-box__btns{
-      .el-button{
+    
+    .el-message-box__btns {
+      .el-button {
         width: 106px;
         height: 40px;
         border-radius: 10px;
@@ -493,14 +488,17 @@
         color: #c42923;
         background-color #c42923
       }
-      .el-button:nth-child(1){
+      
+      .el-button:nth-child(1) {
         background-color #ffffff
       }
-      .el-button:nth-child(2){
+      
+      .el-button:nth-child(2) {
         color #ffffff
         margin-left 40px
       }
-      .el-button--primary{
+      
+      .el-button--primary {
         color #ffffff
         background-color #c42923 !important
       }
