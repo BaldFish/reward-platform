@@ -3,7 +3,7 @@
     <div class="nav_wrap">
       <ul class="nav">
         <li>
-          <router-link to="/login">|<span>发币管理</span></router-link>
+          <router-link to="/home/issuingManagement">|<span>发币管理</span></router-link>
         </li>
       </ul>
     </div>
