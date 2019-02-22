@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import myLogin from '@/components/login/login'
 import myHome from '@/components/home/home'
 import myIssuingManagement from '@/components/home/issuingManagement'
+import myIssuingSearch from '@/components/home/issuingSearch'
 Vue.use(Router);
 
 export default new Router({
@@ -29,6 +30,11 @@ export default new Router({
           path: '/home/issuingManagement',
           name: 'issuingManagement',
           component: myIssuingManagement,
+        },
+        {
+          path: '/home/issuingSearch',
+          name: 'issuingSearch',
+          component: myIssuingSearch,
         },
       ]
     },

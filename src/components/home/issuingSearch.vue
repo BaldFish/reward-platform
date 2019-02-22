@@ -1,5 +1,5 @@
 <template>
-  <div class="issuingManagement">
+  <div class="issuingSearch">
     <div class="import_wrap">
       <p class="tip">请按照Excel指定格式导入表格！</p>
       <div class="import">
@@ -28,7 +28,7 @@
                         end-placeholder="结束日期"
                         :default-time="['00:00:00', '23:59:59']" size="small">
         </el-date-picker>
-        <span @click="btnTurnSearchPage" class="btn_search">搜索</span>
+        <span @click="btnSearchRecordsList" class="btn_search">搜索</span>
       </div>
       <div class="content">
         <table>
@@ -134,6 +134,10 @@
     created() {
     },
     beforeMount() {
+      this.walletAddress=JSON.parse(window.sessionStorage.getItem('searchData')).walletAddress;
+      this.phone=JSON.parse(window.sessionStorage.getItem('searchData')).phone;
+      this.email=JSON.parse(window.sessionStorage.getItem('searchData')).email;
+      this.time=JSON.parse(window.sessionStorage.getItem('searchData')).time;
       this.getRecordsList()
     },
     mounted() {
@@ -192,18 +196,12 @@
         })
       },
       //点击搜索按钮获取奖励发放流水列表
-      btnTurnSearchPage() {
+      btnSearchRecordsList() {
         if (this.time === null) {
           this.time = ["", ""]
         }
-        let searchData={
-          walletAddress:this.walletAddress,
-          phone:this.phone,
-          email:this.email,
-          time:this.time,
-        };
-        window.sessionStorage.setItem("searchData", JSON.stringify(searchData));
-        this.$router.push('/home/issuingSearch')
+        this.page = 1;
+        this.getRecordsList();
       },
       //更改每页显示条数
       handleSizeChange(val) {
@@ -281,7 +279,7 @@
 </script>
 
 <style scoped lang="stylus">
-  .issuingManagement {
+  .issuingSearch {
     width 1400px
     margin 0 auto
     
